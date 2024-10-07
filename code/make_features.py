@@ -24,19 +24,18 @@ for root, dirs, files in os.walk(db_foldername):
             # Relative path of the image
             img_relpath = os.path.relpath(img_path)
             
-            print(img_relpath)
-            # # Subject
-            # subject = int(os.path.split(os.path.dirname(img_relpath))[-1])
+            # Subject
+            subject = int(os.path.split(os.path.dirname(img_relpath))[-1])
             
-            # # Feature extractor
-            # f_vgg16     = feature_extractor_VGG16(img_relpath)
-            # f_resnet    = feature_extractor_ResNet50(img_path)
-            # f_inception = feature_extractor_InceptionV3(img_relpath)
-            # f_mobilenet = feature_extractor_MobileNet(img_relpath)
+            # Feature extractor
+            f_vgg16     = feature_extractor_VGG16(img_relpath)
+            f_resnet    = feature_extractor_ResNet50(img_path)
+            f_inception = feature_extractor_InceptionV3(img_relpath)
+            f_mobilenet = feature_extractor_MobileNet(img_relpath)
             
-            # # Save features to CSV files
-            # save_features(vgg16_csv, subject, f_vgg16)
-            # save_features(resnet_csv, subject, f_resnet)
-            # save_features(inception_csv, subject, f_inception)
-            # save_features(mobilenet_csv, subject, f_mobilenet)
+            # Save features to CSV files
+            save_features(vgg16_csv, subject, f_vgg16)
+            save_features(resnet_csv, subject, f_resnet)
+            save_features(inception_csv, subject, f_inception)
+            save_features(mobilenet_csv, subject, f_mobilenet)
             
