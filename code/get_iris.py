@@ -2,9 +2,9 @@
 # https://github.com/ntachukwu/python-iris-recognition.git
 
 import numpy as np
+import cv2
 import multiprocessing as mp
 
-from cv2 import imread
 from scipy import signal
 from scipy.ndimage import convolve
 from skimage.transform import radon
@@ -962,7 +962,7 @@ def extractFeature(im_filename, eyelashes_thres=80, use_multiprocess=True):
 		im_filename			- The input iris image
 	"""
 	# Perform segmentation
-	im = imread(im_filename, 0)
+	im = cv2.imread(im_filename, 0)
 	ciriris, cirpupil, imwithnoise = segment(im, eyelashes_thres, use_multiprocess)
 
 	# Perform normalization
@@ -975,3 +975,11 @@ def extractFeature(im_filename, eyelashes_thres=80, use_multiprocess=True):
 
 	# Return
 	return template, mask, im_filename
+
+
+##-----------------------------------------------------------------------------
+##  Función general
+##-----------------------------------------------------------------------------
+def get_iris(img_filename):
+    template, _, _ = extractFeature(img_filename)
+    return (template*255).astype(np.uint8)
