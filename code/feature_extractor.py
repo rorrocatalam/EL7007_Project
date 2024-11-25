@@ -48,10 +48,10 @@ def get_features(model_name, db_path, eye, res_path):
         target_size = (224, 224)
     elif model_name == 'resnet50':
         model = model_resnet50
-        target_size = (299, 299)
+        target_size = (224, 224)
     elif model_name == 'inception':
         model = model_inception
-        target_size = (224, 224)
+        target_size = (299, 299)
     elif model_name == 'mobilenet':
         model = model_mobilenet
         target_size = (224, 224)
@@ -75,7 +75,6 @@ def get_features(model_name, db_path, eye, res_path):
     # Modelo con salidas en todas las capas
     activation_model = keras.Model(inputs=model.input, outputs=layer_outputs)
     
-    i=0
     # Se recorre el directorio con usuarios
     for user_dir in os.listdir(db_path):
         user_path = os.path.join(db_path, user_dir)
@@ -92,8 +91,6 @@ def get_features(model_name, db_path, eye, res_path):
                 # Extraccion y almacenamiento de caracteristicas
                 image_ft   = get_image_features(image_path, activation_model, target_size)
                 write_csv_files(layer_names, res_path, image_ft, user)
-                i+=1
-                print(i)
         
     print(f'Features guardadas en \"{res_path}\"')
 
@@ -139,12 +136,29 @@ def get_user(img_path):
     index = parts.index("CASIA-IrisV3")
     return parts[index+2]
 
+# -----------------------------------------------------------------------------
+# Ejecucion de funciones para todos los modelos
+# -----------------------------------------------------------------------------
+
+db_path = 'CASIA-IrisV3/CASIA-Iris-Lamp'
+sel_eye = 'L'
 
 model_name = 'vgg16'
+res_path = f'features_{sel_eye}/{model_name}'
+print('Saving VGG-16 features...')
+get_features(model_name, db_path, sel_eye, res_path)
 
-db_path = '../CASIA-IrisV3/CASIA-Iris-Lamp'
-sel_eye = 'L'
-res_path = f'../features_{sel_eye}/{model_name}'
+model_name = 'resnet50'
+res_path = f'features_{sel_eye}/{model_name}'
+print('Saving ResNet-50 features...')
+get_features(model_name, db_path, sel_eye, res_path)
 
-print('Saving VGG16 features...')
+model_name = 'inception'
+res_path = f'features_{sel_eye}/{model_name}'
+print('Saving Inception features...')
+get_features(model_name, db_path, sel_eye, res_path)
+
+model_name = 'mobilenet'
+res_path = f'features_{sel_eye}/{model_name}'
+print('Saving MobileNet features...')
 get_features(model_name, db_path, sel_eye, res_path)
