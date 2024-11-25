@@ -36,7 +36,7 @@ model_mobilenet      = Model(inputs=base_model_mobilenet.input,
 # Extraccion de caracteristicas
 # -----------------------------------------------------------------------------
 
-def get_features(model_name, db_path, eye, res_path):
+def get_features(model_name, db_path, eye, res_path, npp):
     global model_vgg16
     global model_resnet50
     global model_inception
@@ -75,22 +75,28 @@ def get_features(model_name, db_path, eye, res_path):
     # Modelo con salidas en todas las capas
     activation_model = keras.Model(inputs=model.input, outputs=layer_outputs)
     
+    pp = 0
     # Se recorre el directorio con usuarios
     for user_dir in os.listdir(db_path):
-        user_path = os.path.join(db_path, user_dir)
-        
-        # Directorio del ojo seleccionado
-        target_path = os.path.join(user_path, eye)
-        if os.path.exists(target_path):
+        if pp < npp:
+            user_path = os.path.join(db_path, user_dir)
             
-            # Directorio de cada imagen
-            for image_file in os.listdir(target_path):
-                image_path = os.path.join(target_path, image_file)
-                user = get_user(image_path)
+            # Directorio del ojo seleccionado
+            target_path = os.path.join(user_path, eye)
+            if os.path.exists(target_path):
                 
-                # Extraccion y almacenamiento de caracteristicas
-                image_ft   = get_image_features(image_path, activation_model, target_size)
-                write_csv_files(layer_names, res_path, image_ft, user)
+                # Directorio de cada imagen
+                for image_file in os.listdir(target_path):
+                    image_path = os.path.join(target_path, image_file)
+                    user = get_user(image_path)
+                    
+                    # Extraccion y almacenamiento de caracteristicas
+                    image_ft   = get_image_features(image_path, activation_model, target_size)
+                    write_csv_files(layer_names, res_path, image_ft, user)
+                
+                pp += 1
+        else:
+            break
         
     print(f'Features guardadas en \"{res_path}\"')
 
@@ -140,25 +146,25 @@ def get_user(img_path):
 # Ejecucion de funciones para todos los modelos
 # -----------------------------------------------------------------------------
 
-db_path = 'CASIA-IrisV3/CASIA-Iris-Lamp'
-sel_eye = 'L'
+# db_path = 'CASIA-IrisV3/CASIA-Iris-Lamp'
+# sel_eye = 'L'
 
-model_name = 'vgg16'
-res_path = f'features_{sel_eye}/{model_name}'
-print('Saving VGG-16 features...')
-get_features(model_name, db_path, sel_eye, res_path)
+# model_name = 'vgg16'
+# res_path = f'features_{sel_eye}/{model_name}'
+# print('Saving VGG-16 features...')
+# get_features(model_name, db_path, sel_eye, res_path)
 
-model_name = 'resnet50'
-res_path = f'features_{sel_eye}/{model_name}'
-print('Saving ResNet-50 features...')
-get_features(model_name, db_path, sel_eye, res_path)
+# model_name = 'resnet50'
+# res_path = f'features_{sel_eye}/{model_name}'
+# print('Saving ResNet-50 features...')
+# get_features(model_name, db_path, sel_eye, res_path)
 
-model_name = 'inception'
-res_path = f'features_{sel_eye}/{model_name}'
-print('Saving Inception features...')
-get_features(model_name, db_path, sel_eye, res_path)
+# model_name = 'inception'
+# res_path = f'features_{sel_eye}/{model_name}'
+# print('Saving Inception features...')
+# get_features(model_name, db_path, sel_eye, res_path)
 
-model_name = 'mobilenet'
-res_path = f'features_{sel_eye}/{model_name}'
-print('Saving MobileNet features...')
-get_features(model_name, db_path, sel_eye, res_path)
+# model_name = 'mobilenet'
+# res_path = f'features_{sel_eye}/{model_name}'
+# print('Saving MobileNet features...')
+# get_features(model_name, db_path, sel_eye, res_path)
