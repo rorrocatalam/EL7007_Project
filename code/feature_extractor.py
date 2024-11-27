@@ -3,11 +3,17 @@
 # -----------------------------------------------------------------------------
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications import VGG16, ResNet50, InceptionV3, MobileNet
+from tensorflow.keras.applications.vgg16 import preprocess_input as ppi_vgg16
+from tensorflow.keras.applications.resnet50 import preprocess_input as ppi_resnet50
+from tensorflow.keras.applications.inception_v3 import preprocess_input as ppi_inception
+from tensorflow.keras.applications.mobilenet import preprocess_input as ppi_mobilenet
 from tensorflow.keras import layers
+
 
 
 # -----------------------------------------------------------------------------
