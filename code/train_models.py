@@ -3,17 +3,17 @@ import csv
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, top_k_accuracy_score
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 
-def train_svm_per_layer(ft_path, output_file, n_features=8193):
+def train_svm_per_layer(ft_path, output_file, out5_file, n_features=8193):
     # Archivos csv con caracteristicas
     csv_files  = [file for file in os.listdir(ft_path) if file.endswith('.csv')]
     for i in range(len(csv_files)):
         # Archivo
         csv_file = f'{ft_path}/{csv_files[i]}'
-
+    
         # Cantidad de caracteristicas
         with open(csv_file, 'r') as archivo:
             reader = csv.reader(archivo)
@@ -39,20 +39,24 @@ def train_svm_per_layer(ft_path, output_file, n_features=8193):
 
             # Entrenamiento SVM y prediccion
             print('Training SVM...')
-            svm = SVC(C=100, gamma='auto', kernel='sigmoid')
+            svm = SVC(C=100, gamma='auto', kernel='sigmoid', probability=True)
             svm.fit(X_train_s, y_train)
             # Prediccion y guardo resultados
             print('Saving results...')
-            y_pred = svm.predict(X_test_s)
-            conf_mtx_svm = confusion_matrix(y_pred, y_test)
-            accuracy = np.trace(conf_mtx_svm) / np.sum(conf_mtx_svm)
+            probabilities = svm.predict_proba(X_test_s)
+            rank1_acc = top_k_accuracy_score(y_test,probabilities, k=1)
+            rank5_acc= top_k_accuracy_score(y_test,probabilities, k=5)
             with open(output_file, 'a') as f:
                 layer_name = os.path.splitext(os.path.basename(csv_file))[0]
-                f.write(f"{layer_name},{accuracy:.4f}\n")
-                print(f'Layer {layer_name}: {100*accuracy:.2f}% Accuracy')
+                f.write(f"{layer_name},{rank1_acc:.4f}\n")
+                print(f'Layer {layer_name}: {100*rank1_acc:.2f}% Accuracy')
+            with open(out5_file, 'a') as f:
+                layer_name = os.path.splitext(os.path.basename(csv_file))[0]
+                f.write(f"{layer_name},{rank5_acc:.4f}\n")
+                print(f'Layer {layer_name}: {100*rank5_acc:.2f}% Accuracy Rank5')
             print()
 
-def train_rf_per_layer(ft_path, output_file, n_features=8193):
+def train_rf_per_layer(ft_path, output_file, out5_file, n_features=8193):
     # Archivos csv con caracteristicas
     csv_files  = [file for file in os.listdir(ft_path) if file.endswith('.csv')]
     for i in range(len(csv_files)):
@@ -89,11 +93,15 @@ def train_rf_per_layer(ft_path, output_file, n_features=8193):
             rf.fit(X_train_s, y_train)
             # Prediccion y guardo resultados
             print('Saving results...')
-            y_pred = rf.predict(X_test_s)
-            conf_mtx_svm = confusion_matrix(y_pred, y_test)
-            accuracy = np.trace(conf_mtx_svm) / np.sum(conf_mtx_svm)
+            probs = rf.predict_proba(X_test_s)
+            rank1_acc = top_k_accuracy_score(y_test,probs, k=1)
+            rank5_acc= top_k_accuracy_score(y_test,probs, k=5)
             with open(output_file, 'a') as f:
                 layer_name = os.path.splitext(os.path.basename(csv_file))[0]
-                f.write(f"{layer_name},{accuracy:.4f}\n")
-                print(f'Layer {layer_name}: {100*accuracy:.2f}% Accuracy')
+                f.write(f"{layer_name},{rank1_acc:.4f}\n")
+                print(f'Layer {layer_name}: {100*rank1_acc:.2f}% Accuracy')
+            with open(out5_file, 'a') as f:
+                layer_name = os.path.splitext(os.path.basename(csv_file))[0]
+                f.write(f"{layer_name},{rank5_acc:.4f}\n")
+                print(f'Layer {layer_name}: {100*rank5_acc:.2f}% Accuracy Rank5')
             print()
