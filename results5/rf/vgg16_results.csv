@@ -1,0 +1,15 @@
+block5_pool,0.9916
+fc2,0.9983
+block4_conv2,0.9983
+block5_conv3,0.9933
+block5_conv1,0.9966
+block4_conv1,1.0000
+block4_pool,0.9966
+block5_conv2,0.9983
+block2_pool,1.0000
+block4_conv3,0.9966
+block3_conv3,0.9983
+block3_conv1,0.9983
+block3_pool,0.9983
+fc1,0.9983
+block3_conv2,0.9983
